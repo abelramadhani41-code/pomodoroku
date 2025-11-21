@@ -134,7 +134,7 @@
         <div class="motivational-quote" id="quote-display">"Tekad hari ini menentukan kesuksesan hari esok."</div>
         <div class="container">
             <h1>⏰ Pomodoro Timer</h1>
-            <div class="modes"><button id="focus-btn" class="active">Fokus (25m)</button><button id="shortBreak-btn">Istirahat (5m)</button><button id="longBreak-btn">Lama (15m)</button></div>
+            <div class="modes"><button id="focus-btn" class="active">Fokus (25m)</button><button id="shortBreak-btn">Istirahat (5m)</button><button id="longBreak-btn">Istirahat Lama (15m)</button></div>
             <div class="progress-circle">
                 <div class="timer-display"><span id="minutes">25</span>:<span id="seconds">00</span></div>
                 <svg class="progress-ring" width="320" height="320"><circle class="progress-ring__circle progress-ring__bg" stroke-width="12" fill="transparent" r="154" cx="160" cy="160"/><circle class="progress-ring__circle progress-ring__active" stroke-width="12" fill="transparent" r="154" cx="160" cy="160"/></svg>
@@ -182,6 +182,9 @@
     </div>
 
     <audio id="alarm-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_c610232532.mp3"></audio> 
+    <audio id="alarm25-sound" src="alarm25.mp3"></audio>
+    <audio id="alarm5-sound" src="alarm5.mp3"></audio>
+    <audio id="alarm15-sound" src="alarm15.mp3"></audio>
     <audio id="focus-audio" loop></audio>
 
     <script>
@@ -361,10 +364,40 @@
             uT();svS();uS()
         }
         
+        function playAlarmByMode(mode){
+            let alarmSound;
+            if(mode==='focus'){
+                alarmSound=document.getElementById('alarm25-sound');
+            }else if(mode==='shortBreak'){
+                alarmSound=document.getElementById('alarm5-sound');
+            }else if(mode==='longBreak'){
+                alarmSound=document.getElementById('alarm15-sound');
+            }
+            
+            if(alarmSound){
+                alarmSound.play().catch(err=>{
+                    console.warn("Gagal memutar alarm:",err);
+                    document.getElementById('alarm-sound').play();
+                });
+            }else{
+                document.getElementById('alarm-sound').play();
+            }
+        }
+        
         function endT(){
             pT();
-            document.getElementById('alarm-sound').play();
-            if(s.mo==='focus'){s.st.pc++;svS();uS();sM('shortBreak')}else sM('focus');
+            playAlarmByMode(s.mo);
+            
+            if(s.mo==='focus'){
+                s.st.pc++;
+                svS();
+                uS();
+                sM('shortBreak')
+            }else if(s.mo==='shortBreak'){
+                sM('focus')
+            }else if(s.mo==='longBreak'){
+                sM('focus')
+            }
             sT()
         }
         
